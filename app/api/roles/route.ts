@@ -5,7 +5,8 @@ export async function GET() {
   try {
     const roles = await prisma.role.findMany()
     return NextResponse.json(roles)
-  } catch (error) {
+  } catch (err) {
+    console.error('Failed to fetch roles:', err)
     return NextResponse.json({ error: 'Failed to fetch roles' }, { status: 500 })
   }
 }
@@ -20,7 +21,8 @@ export async function POST(request: Request) {
       },
     })
     return NextResponse.json(role)
-  } catch (error) {
+  } catch (err) {
+    console.error('Failed to create role:', err)
     return NextResponse.json({ error: 'Failed to create role' }, { status: 500 })
   }
 }

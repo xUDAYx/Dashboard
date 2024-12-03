@@ -38,11 +38,14 @@ export default function UserManagement() {
   const { toast } = useToast()
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     void fetchUsers()
     void fetchRoles()
   }, [])
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchUsers = async () => {
     try {
@@ -51,11 +54,14 @@ export default function UserManagement() {
       if (!response.ok) throw new Error('Failed to fetch users')
       const data = await response.json()
       setUsers(data)
-    } catch (error) {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to fetch users",
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)
@@ -68,11 +74,14 @@ export default function UserManagement() {
       if (!response.ok) throw new Error('Failed to fetch roles')
       const data = await response.json()
       setRoles(data)
-    } catch (error) {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to fetch roles",
+        description: errorMessage,
       })
     }
   }
@@ -94,11 +103,14 @@ export default function UserManagement() {
         title: "Success",
         description: "User added successfully",
       })
-    } catch (error) {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to add user",
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)
@@ -115,11 +127,14 @@ export default function UserManagement() {
         title: "Success",
         description: "User deleted successfully",
       })
-    } catch (error) {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to delete user",
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)
@@ -152,11 +167,14 @@ export default function UserManagement() {
         title: "Success",
         description: "User updated successfully",
       })
-    } catch (error) {
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update user",
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)

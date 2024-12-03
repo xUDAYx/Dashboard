@@ -40,10 +40,12 @@ export default function RoleManagement() {
   const [editingRole, setEditingRole] = useState<Role | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
+  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     void fetchRoles()
     void fetchPermissions()
   }, [])
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchRoles = async () => {
     try {
@@ -54,11 +56,13 @@ export default function RoleManagement() {
       const data = await response.json()
       setRoles(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch roles')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to fetch roles",
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)
@@ -90,11 +94,13 @@ export default function RoleManagement() {
         description: "Role added successfully",
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to add role')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to add role",
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)
@@ -152,11 +158,13 @@ export default function RoleManagement() {
         description: "Role updated successfully",
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update role')
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
+      setError(errorMessage)
+      console.error(errorMessage)
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update role",
+        description: errorMessage,
       })
     } finally {
       setIsLoading(false)
