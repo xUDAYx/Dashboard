@@ -40,12 +40,10 @@ export default function RoleManagement() {
   const [editingRole, setEditingRole] = useState<Role | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
-  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
     void fetchRoles()
     void fetchPermissions()
   }, [])
-  /* eslint-enable react-hooks/exhaustive-deps */
 
   const fetchRoles = async () => {
     try {
