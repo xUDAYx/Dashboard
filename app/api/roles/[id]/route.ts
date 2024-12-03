@@ -6,14 +6,14 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    await prisma.user.delete({
+    await prisma.role.delete({
       where: {
         id: parseInt(params.id),
       },
     })
-    return NextResponse.json({ message: 'User deleted successfully' })
+    return NextResponse.json({ message: 'Role deleted successfully' })
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to delete user' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to delete role' }, { status: 500 })
   }
 }
 
@@ -23,22 +23,18 @@ export async function PUT(
 ) {
   try {
     const body = await request.json()
-    const user = await prisma.user.update({
+    const role = await prisma.role.update({
       where: {
         id: parseInt(params.id),
       },
       data: {
         name: body.name,
-        email: body.email,
-        roleId: body.roleId,
-      },
-      include: {
-        role: true,
+        permissions: body.permissions,
       },
     })
-    return NextResponse.json(user)
+    return NextResponse.json(role)
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to update role' }, { status: 500 })
   }
 }
 

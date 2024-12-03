@@ -1,54 +1,35 @@
-import { prisma } from "@/lib/prisma"
-import { NextResponse } from "next/server"
-import bcrypt from "bcrypt"
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export async function GET() {
-  const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      roles: {
-        select: {
-          name: true
-        }
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        role: true,
       },
-      createdAt: true
-    }
-  })
-  return NextResponse.json(users)
+    })
+    return NextResponse.json(users)
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
+  }
 }
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json()
-    
-    const hashedPassword = await bcrypt.hash(data.password, 10)
-    
+    const body = await request.json()
     const user = await prisma.user.create({
       data: {
-        name: data.name,
-        email: data.email,
-        password: hashedPassword,
-        roles: {
-          create: {
-            name: data.role,
-          }
-        }
+        name: body.name,
+        email: body.email,
+        roleId: body.roleId,
       },
       include: {
-        roles: true
-      }
+        role: true,
+      },
     })
-    
-    const { password, ...userWithoutPassword } = user
-    return NextResponse.json(userWithoutPassword)
-    
+    return NextResponse.json(user)
   } catch (error) {
-    console.error('Error creating user:', error)
-    return NextResponse.json(
-      { error: "Failed to create user" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
   }
 }
+

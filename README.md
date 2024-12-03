@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RBAC Dashboard
+
+A modern Role-Based Access Control (RBAC) dashboard built with Next.js, Prisma, and Shadcn UI. This application provides a user-friendly interface for managing users and roles with their respective permissions.
+
+## Features
+
+### User Management
+- Create new users with name, email, and role assignments
+- Edit existing user details and role assignments
+- Delete users from the system
+- View all users in a sortable and searchable table
+- Responsive design for mobile and desktop views
+
+### Role Management
+- Create new roles with custom permissions
+- Edit role names and permission sets
+- Delete roles when no longer needed
+- Search roles by name or permissions
+- Sort roles by different attributes
+- Mobile-responsive card view for smaller screens
+
+### Permissions System
+- Granular permission control (read, write, delete)
+- Assign multiple permissions to roles
+- Flexible permission management through checkboxes
+- Clear permission visibility in role listings
+
+## Tech Stack
+
+- **Frontend**: Next.js 14 with React
+- **Backend**: Next.js API Routes
+- **Database**: PostgreSQL with Prisma ORM
+- **UI Components**: Shadcn UI
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+ installed
+- PostgreSQL database (or any other database supported by Prisma)
+- npm or yarn package manager
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+</rewritten_file>
