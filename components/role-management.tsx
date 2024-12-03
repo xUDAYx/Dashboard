@@ -82,8 +82,10 @@ export default function RoleManagement() {
         body: JSON.stringify(newRole),
       })
       if (!response.ok) throw new Error('Failed to add role')
-      const data = await response.json()
-      setData([...data, data])
+      const newRoleData = await response.json()
+      
+      setData(prevData => [...prevData, newRoleData])
+      
       setNewRole({ name: "", permissions: [] })
       setIsDialogOpen(false)
       toast({
