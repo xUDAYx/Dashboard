@@ -40,8 +40,8 @@ export default function UserManagement() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   useEffect(() => {
-    fetchUsers()
-    fetchRoles()
+    void fetchUsers()
+    void fetchRoles()
   }, [])
 
   const fetchUsers = async () => {

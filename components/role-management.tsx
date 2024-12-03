@@ -41,8 +41,8 @@ export default function RoleManagement() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   useEffect(() => {
-    fetchRoles()
-    fetchPermissions()
+    void fetchRoles()
+    void fetchPermissions()
   }, [])
 
   const fetchRoles = async () => {

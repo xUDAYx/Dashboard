@@ -12,7 +12,8 @@ export async function DELETE(
       },
     })
     return NextResponse.json({ message: 'Role deleted successfully' })
-  } catch (error) {
+  } catch (err) {
+    console.error('Failed to delete role:', err)
     return NextResponse.json({ error: 'Failed to delete role' }, { status: 500 })
   }
 }
@@ -33,7 +34,8 @@ export async function PUT(
       },
     })
     return NextResponse.json(role)
-  } catch (error) {
+  } catch (err) {
+    console.error('Failed to update role:', err)
     return NextResponse.json({ error: 'Failed to update role' }, { status: 500 })
   }
 }
