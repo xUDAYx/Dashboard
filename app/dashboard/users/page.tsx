@@ -35,6 +35,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -50,9 +51,37 @@ export default function UsersPage() {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const handleEditUser = async (userId: number, userData: any) => {
+    try {
+      // Ensure userData is not null and has the required fields
+      if (!userData) {
+        throw new Error('User data is required');
+      }
+      
+      const response = await fetch(`/api/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: userData.name,
+          email: userData.email,
+          status: userData.status,
+          roles: userData.roles
+        }),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to update user');
+      }
+      
+      fetchUsers();
+      setEditingUser(null);
+    } catch (err: any) {
+      console.log('Error updating user:', err.message);
+    }
+  };
 
   const handleDeleteUser = async (userId: number) => {
     const response = await fetch(`/api/users/${userId}`, {
@@ -62,6 +91,10 @@ export default function UsersPage() {
       fetchUsers();
     }
   };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const filteredUsers = users.filter(
     (user) =>
@@ -117,9 +150,18 @@ export default function UsersPage() {
               </TableCell>
               <TableCell>
                 <div className="flex space-x-2">
-                  <Dialog>
+                  <Dialog 
+                    open={editingUser?.id === user.id} 
+                    onOpenChange={(open) => {
+                      if (!open) setEditingUser(null);
+                    }}
+                  >
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="icon">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        onClick={() => setEditingUser(user)}
+                      >
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -127,13 +169,14 @@ export default function UsersPage() {
                       <DialogHeader>
                         <DialogTitle>Edit User</DialogTitle>
                       </DialogHeader>
-                      <UserForm
-                        user={user}
-                        onSubmit={(updatedData) => {
-                          handleEditUser(user.id, updatedData);
-                          fetchUsers();
-                        }}
-                      />
+                      {editingUser && (
+                        <UserForm
+                          user={editingUser}
+                          onSubmit={async (updatedData) => {
+                            await handleEditUser(editingUser.id, updatedData);
+                          }}
+                        />
+                      )}
                     </DialogContent>
                   </Dialog>
                   <Button
@@ -152,24 +195,3 @@ export default function UsersPage() {
     </div>
   );
 }
-
-const handleEditUser = async (userId: number, userData: any) => {
-  try {
-    const response = await fetch(`/api/users/${userId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userData),
-    });
-    if (response.ok) {
-      fetchUsers();
-    }
-  } catch (err: any) {
-    console.log('Error updating user:', err.message);
-  }
-};
-function fetchUsers() {
-  throw new Error("Function not implemented.");
-}
-
