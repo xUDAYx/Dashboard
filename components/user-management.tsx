@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 import { ChevronUp, ChevronDown, Search } from 'lucide-react'
+import { Skeleton } from "./ui/skeleton"
 
 type User = {
   id: number
@@ -390,36 +391,54 @@ export default function UserManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAndSortedUsers.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.name}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">
-                    {user.email}
-                  </TableCell>
-                  <TableCell>{user.role.name}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingUser(user)
-                          setIsEditDialogOpen(true)
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteUser(user.id)}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isLoading ? (
+                // Skeleton loading state
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell><Skeleton className="h-6 w-[180px]" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-[180px]" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-[80px]" /></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-8 w-[60px]" />
+                        <Skeleton className="h-8 w-[60px]" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                // Existing table content
+                filteredAndSortedUsers.map((user) => (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {user.email}
+                    </TableCell>
+                    <TableCell>{user.role.name}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingUser(user)
+                            setIsEditDialogOpen(true)
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteUser(user.id)}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>

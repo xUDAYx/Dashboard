@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
 import { ChevronUp, ChevronDown, Search } from 'lucide-react'
+import { Skeleton } from "./ui/skeleton"
 
 type Permission = {
   id: string
@@ -271,37 +272,52 @@ export default function RoleManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredAndSortedRoles.map((role) => (
-                <TableRow key={role.id}>
-                  <TableCell>{role.name}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">
-                    {role.permissions.join(", ")}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEditingRole(role)
-                          setIsEditDialogOpen(true)
-                        }}
-                        disabled={isLoading}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteRole(role.id)}
-                        disabled={isLoading}
-                      >
-                        Delete
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell><Skeleton className="h-6 w-[180px]" /></TableCell>
+                    <TableCell><Skeleton className="h-6 w-[250px]" /></TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-8 w-[60px]" />
+                        <Skeleton className="h-8 w-[60px]" />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                filteredAndSortedRoles.map((role) => (
+                  <TableRow key={role.id}>
+                    <TableCell>{role.name}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {role.permissions.join(", ")}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setEditingRole(role)
+                            setIsEditDialogOpen(true)
+                          }}
+                          disabled={isLoading}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => handleDeleteRole(role.id)}
+                          disabled={isLoading}
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
