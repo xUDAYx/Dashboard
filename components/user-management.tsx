@@ -392,8 +392,6 @@ export default function UserManagement() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-
-
                 Array.from({ length: 10 }).map((_, index) => (
                   <TableRow key={index}>
                     <TableCell><Skeleton className="h-6 w-[180px]" /></TableCell>
@@ -408,7 +406,6 @@ export default function UserManagement() {
                   </TableRow>
                 ))
               ) : (
-
                 filteredAndSortedUsers.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell>{user.name}</TableCell>
