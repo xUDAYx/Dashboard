@@ -1,10 +1,6 @@
-import UserManagement from "@/components/user-management"
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  return (
-    <div>
-      <UserManagement />
-    </div>
-  )
+  redirect("/dashboard")
 }
 

@@ -3,12 +3,11 @@
 import { useState, useEffect, useMemo } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ChevronUp, ChevronDown, Search } from 'lucide-react'
 
 type Permission = {
@@ -114,18 +113,12 @@ export default function RoleManagement() {
     })
   }
 
-  const handlePermissionChange = (permissionId: string, checked: boolean) => {
-    if (checked) {
-      setNewRole({ ...newRole, permissions: [...newRole.permissions, permissionId] })
-    } else {
-      setNewRole({ ...newRole, permissions: newRole.permissions.filter(id => id !== permissionId) })
-    }
-  }
-
   const handleSort = (key: keyof Role) => {
     setSortConfig(prevConfig => ({
       key,
-      direction: prevConfig.key === key && prevConfig.direction === 'ascending' ? 'descending' : 'ascending'
+      direction: prevConfig.key === key && prevConfig.direction === 'ascending' 
+        ? 'descending' 
+        : 'ascending'
     }))
   }
 
@@ -173,7 +166,9 @@ export default function RoleManagement() {
     return data
       .filter(role => 
         role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        role.permissions.some(permission => permission.toLowerCase().includes(searchTerm.toLowerCase()))
+        role.permissions.some(permission => 
+          permission.toLowerCase().includes(searchTerm.toLowerCase())
+        )
       )
       .sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -187,135 +182,138 @@ export default function RoleManagement() {
   }, [data, searchTerm, sortConfig])
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6 gap-4">
-        <div className="flex items-center gap-4">
-          <h2 className="text-3xl font-bold">Role Management</h2>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="default">Add Role</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add New Role</DialogTitle>
-                <DialogDescription>
-                  Enter the name for the new role and select the permissions.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input
-                    id="name"
-                    value={newRole.name}
-                    onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-start gap-4">
-                  <Label className="text-right">Permissions</Label>
-                  <div className="col-span-3 space-y-2">
-                    {permissions.map((permission) => (
-                      <div key={permission.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={permission.id}
-                          checked={newRole.permissions.includes(permission.id)}
-                          onCheckedChange={(checked) => handlePermissionChange(permission.id, checked as boolean)}
-                        />
-                        <Label htmlFor={permission.id}>{permission.name}</Label>
-                      </div>
-                    ))}
-                  </div>
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold">Role Management</h1>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="w-full sm:w-auto">Add Role</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Role</DialogTitle>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">Name</Label>
+                <Input
+                  id="name"
+                  value={newRole.name}
+                  onChange={(e) => setNewRole({ ...newRole, name: e.target.value })}
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-start gap-4">
+                <Label className="text-right">Permissions</Label>
+                <div className="col-span-3 space-y-2">
+                  {permissions.map((permission) => (
+                    <div key={permission.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={permission.id}
+                        checked={newRole.permissions.includes(permission.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setNewRole({ 
+                              ...newRole, 
+                              permissions: [...newRole.permissions, permission.id] 
+                            })
+                          } else {
+                            setNewRole({
+                              ...newRole,
+                              permissions: newRole.permissions.filter(id => id !== permission.id)
+                            })
+                          }
+                        }}
+                      />
+                      <Label htmlFor={permission.id}>{permission.name}</Label>
+                    </div>
+                  ))}
                 </div>
               </div>
-              <Button onClick={handleAddRole}>Add Role</Button>
-            </DialogContent>
-          </Dialog>
-        </div>
+            </div>
+            <Button onClick={handleAddRole} disabled={isLoading}>
+              {isLoading ? "Adding..." : "Add Role"}
+            </Button>
+          </DialogContent>
+        </Dialog>
       </div>
-      <div className="mb-4 flex items-center">
-        <Search className="w-5 h-5 mr-2 text-gray-500" />
+
+      <div className="relative max-w-sm">
         <Input
           placeholder="Search roles..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-sm"
+          className="pr-8"
         />
+        <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-gray-500" />
       </div>
-      <div className="hidden md:block">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead onClick={() => handleSort('name')} className="cursor-pointer">
-                Name {sortConfig.key === 'name' && (sortConfig.direction === 'ascending' ? <ChevronUp className="inline" /> : <ChevronDown className="inline" />)}
-              </TableHead>
-              <TableHead>Permissions</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredAndSortedRoles.map((role) => (
-              <TableRow key={role.id}>
-                <TableCell>{role.name}</TableCell>
-                <TableCell>{role.permissions.join(", ")}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setEditingRole(role)
-                        setIsEditDialogOpen(true)
-                      }}
-                      disabled={isLoading}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => handleDeleteRole(role.id)}
-                      disabled={isLoading}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </TableCell>
+
+      <div className="relative w-full overflow-auto">
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead 
+                  className="w-[200px] cursor-pointer"
+                  onClick={() => handleSort('name')}
+                >
+                  Name 
+                  {sortConfig.key === 'name' && (
+                    sortConfig.direction === 'ascending' ? 
+                      <ChevronUp className="inline ml-2 h-4 w-4" /> : 
+                      <ChevronDown className="inline ml-2 h-4 w-4" />
+                  )}
+                </TableHead>
+                <TableHead className="min-w-[200px]">Permissions</TableHead>
+                <TableHead className="w-[150px]">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {filteredAndSortedRoles.map((role) => (
+                <TableRow key={role.id}>
+                  <TableCell>{role.name}</TableCell>
+                  <TableCell className="max-w-[200px] truncate">
+                    {role.permissions.join(", ")}
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setEditingRole(role)
+                          setIsEditDialogOpen(true)
+                        }}
+                        disabled={isLoading}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteRole(role.id)}
+                        disabled={isLoading}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-      <div className="grid gap-4 md:hidden">
-        {filteredAndSortedRoles.map((role) => (
-          <Card key={role.id}>
-            <CardHeader>
-              <CardTitle>{role.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p><strong>Permissions:</strong> {role.permissions.join(", ")}</p>
-              <div className="flex space-x-2 mt-4">
-                <Button variant="destructive" onClick={() => handleDeleteRole(role.id)}>
-                  Delete
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+
+      {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Role</DialogTitle>
-            <DialogDescription>
-              Modify the role name and permissions.
-            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="edit-name" className="text-right">
-                Name
-              </Label>
+              <Label htmlFor="edit-name" className="text-right">Name</Label>
               <Input
                 id="edit-name"
                 value={editingRole?.name || ""}

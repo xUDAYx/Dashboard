@@ -1,6 +1,6 @@
 "use client"
 
-import { Users, ShieldCheck, Menu } from 'lucide-react'
+import { LayoutDashboard, Users, ShieldCheck, Menu } from 'lucide-react'
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import {
@@ -20,9 +20,14 @@ export function AppSidebar() {
 
   const menuItems = [
     {
+      title: "Dashboard",
+      icon: LayoutDashboard,
+      href: "/dashboard",
+    },
+    {
       title: "User Management",
       icon: Users,
-      href: "/",
+      href: "/users",
     },
     {
       title: "Role Management",
@@ -37,7 +42,7 @@ export function AppSidebar() {
       <Button
         variant="ghost"
         size="icon"
-        className="fixed left-4 top-4 z-50 md:hidden"
+        className="fixed bottom-4 left-4 z-50 rounded-full shadow-lg md:hidden"
         onClick={() => setIsOpen(!isOpen)}
       >
         <Menu className="h-6 w-6" />
@@ -49,11 +54,11 @@ export function AppSidebar() {
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <SidebarHeader className="flex h-14 items-center px-4">
+        <SidebarHeader className="flex h-14 items-center border-b border-sidebar-border px-6">
           <h1 className="text-lg font-semibold">RBAC Dashboard</h1>
         </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu>
+        <SidebarContent className="py-4">
+          <SidebarMenu className="space-y-1 px-3">
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
@@ -61,9 +66,9 @@ export function AppSidebar() {
                   isActive={pathname === item.href}
                   onClick={() => setIsOpen(false)}
                 >
-                  <Link href={item.href} className="flex items-center gap-3">
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
+                  <Link href={item.href} className="flex items-center gap-4 px-3 py-2">
+                    <item.icon className="h-5 w-5" />
+                    <span className="text-base">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

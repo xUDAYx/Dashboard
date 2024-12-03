@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { ChevronUp, ChevronDown, Search } from 'lucide-react'
 
 type User = {
   id: number
@@ -25,6 +26,11 @@ type Role = {
   name: string
 }
 
+type SortConfig = {
+  key: keyof User | 'role.name'
+  direction: 'ascending' | 'descending'
+}
+
 export default function UserManagement() {
   const [data, setData] = useState<User[]>([])
   const [roles, setRoles] = useState<Role[]>([])
@@ -39,6 +45,11 @@ export default function UserManagement() {
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [_error, setError] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
+    key: 'name',
+    direction: 'ascending'
+  })
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
@@ -95,8 +106,10 @@ export default function UserManagement() {
         body: JSON.stringify(newUser),
       })
       if (!response.ok) throw new Error('Failed to add user')
-      const data = await response.json()
-      setData([...data, data])
+      const newUserData = await response.json()
+      
+      setData(prevData => [...prevData, newUserData])
+      
       setNewUser({ name: "", email: "", roleId: 0 })
       setIsDialogOpen(false)
       toast({
@@ -181,6 +194,36 @@ export default function UserManagement() {
     }
   }
 
+  const handleSort = (key: SortConfig['key']) => {
+    setSortConfig(prevConfig => ({
+      key,
+      direction: prevConfig.key === key && prevConfig.direction === 'ascending' 
+        ? 'descending' 
+        : 'ascending'
+    }))
+  }
+
+  const filteredAndSortedUsers = useMemo(() => {
+    return data
+      .filter(user => 
+        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.role.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      .sort((a, b) => {
+        const aValue = sortConfig.key === 'role.name' ? a.role.name : a[sortConfig.key as keyof User]
+        const bValue = sortConfig.key === 'role.name' ? b.role.name : b[sortConfig.key as keyof User]
+
+        if (aValue < bValue) {
+          return sortConfig.direction === 'ascending' ? -1 : 1
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'ascending' ? 1 : -1
+        }
+        return 0
+      })
+  }, [data, searchTerm, sortConfig])
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -237,6 +280,16 @@ export default function UserManagement() {
             </Button>
           </DialogContent>
         </Dialog>
+      </div>
+
+      <div className="relative max-w-sm">
+        <Input
+          placeholder="Search users..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="pr-8"
+        />
+        <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-gray-500" />
       </div>
 
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -300,14 +353,44 @@ export default function UserManagement() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[200px]">Name</TableHead>
-                <TableHead className="min-w-[200px]">Email</TableHead>
-                <TableHead className="w-[100px]">Role</TableHead>
+                <TableHead 
+                  className="w-[200px] cursor-pointer"
+                  onClick={() => handleSort('name')}
+                >
+                  Name 
+                  {sortConfig.key === 'name' && (
+                    sortConfig.direction === 'ascending' ? 
+                      <ChevronUp className="inline ml-2 h-4 w-4" /> : 
+                      <ChevronDown className="inline ml-2 h-4 w-4" />
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="min-w-[200px] cursor-pointer"
+                  onClick={() => handleSort('email')}
+                >
+                  Email
+                  {sortConfig.key === 'email' && (
+                    sortConfig.direction === 'ascending' ? 
+                      <ChevronUp className="inline ml-2 h-4 w-4" /> : 
+                      <ChevronDown className="inline ml-2 h-4 w-4" />
+                  )}
+                </TableHead>
+                <TableHead 
+                  className="w-[100px] cursor-pointer"
+                  onClick={() => handleSort('role.name')}
+                >
+                  Role
+                  {sortConfig.key === 'role.name' && (
+                    sortConfig.direction === 'ascending' ? 
+                      <ChevronUp className="inline ml-2 h-4 w-4" /> : 
+                      <ChevronDown className="inline ml-2 h-4 w-4" />
+                  )}
+                </TableHead>
                 <TableHead className="w-[150px]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.map((user) => (
+              {filteredAndSortedUsers.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.name}</TableCell>
                   <TableCell className="max-w-[200px] truncate">
