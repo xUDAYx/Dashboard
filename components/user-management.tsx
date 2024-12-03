@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
-import { ChevronUp, ChevronDown, Search } from 'lucide-react'
+import { ChevronUp, ChevronDown, Search, Lock, Eye, EyeOff } from 'lucide-react'
 import { Skeleton } from "./ui/skeleton"
 
 type User = {
@@ -32,13 +32,21 @@ type SortConfig = {
   direction: 'ascending' | 'descending'
 }
 
+type NewUserForm = {
+  name: string
+  email: string
+  roleId: number
+  password: string
+}
+
 export default function UserManagement() {
   const [data, setData] = useState<User[]>([])
   const [roles, setRoles] = useState<Role[]>([])
-  const [newUser, setNewUser] = useState({
+  const [newUser, setNewUser] = useState<NewUserForm>({
     name: "",
     email: "",
     roleId: 0,
+    password: "",
   })
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -51,6 +59,9 @@ export default function UserManagement() {
     key: 'name',
     direction: 'ascending'
   })
+  const [editPassword, setEditPassword] = useState("")
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showEditPassword, setShowEditPassword] = useState(false)
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
@@ -106,25 +117,25 @@ export default function UserManagement() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newUser),
       })
-      if (!response.ok) throw new Error('Failed to add user')
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to add user')
+      }
+
       const newUserData = await response.json()
-      
       setData(prevData => [...prevData, newUserData])
-      
-      setNewUser({ name: "", email: "", roleId: 0 })
+      setNewUser({ name: "", email: "", roleId: 0, password: "" })
       setIsDialogOpen(false)
       toast({
         title: "Success",
         description: "User added successfully",
       })
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-      setError(errorMessage)
-      console.error(errorMessage)
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: errorMessage,
+        description: error instanceof Error ? error.message : "Failed to add user",
       })
     } finally {
       setIsLoading(false)
@@ -167,28 +178,31 @@ export default function UserManagement() {
           name: editingUser.name,
           email: editingUser.email,
           roleId: editingUser.roleId,
+          ...(editPassword ? { newPassword: editPassword } : {}),
         }),
       })
-      if (!response.ok) throw new Error('Failed to update user')
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to update user')
+      }
+
       const updatedUser = await response.json()
-      
       setData(data.map(user => 
         user.id === updatedUser.id ? updatedUser : user
       ))
       setIsEditDialogOpen(false)
       setEditingUser(null)
+      setEditPassword("")
       toast({
         title: "Success",
         description: "User updated successfully",
       })
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred'
-      setError(errorMessage)
-      console.error(errorMessage)
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: errorMessage,
+        description: error instanceof Error ? error.message : "Failed to update user",
       })
     } finally {
       setIsLoading(false)
@@ -258,6 +272,31 @@ export default function UserManagement() {
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password" className="text-right">Password</Label>
+                <div className="col-span-3 relative">
+                  <Input
+                    id="password"
+                    type={showNewPassword ? "text" : "password"}
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                    className="pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-500" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="role" className="text-right">Role</Label>
                 <Select
                   value={newUser.roleId.toString()}
@@ -321,6 +360,37 @@ export default function UserManagement() {
                 )}
                 className="col-span-3"
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="edit-password" className="text-right">
+                <div className="flex items-center gap-2">
+                  <Lock className="h-4 w-4" />
+                  New Password
+                </div>
+              </Label>
+              <div className="col-span-3 relative">
+                <Input
+                  id="edit-password"
+                  type={showEditPassword ? "text" : "password"}
+                  value={editPassword}
+                  onChange={(e) => setEditPassword(e.target.value)}
+                  placeholder="Leave blank to keep current password"
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                  onClick={() => setShowEditPassword(!showEditPassword)}
+                >
+                  {showEditPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-500" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-500" />
+                  )}
+                </Button>
+              </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="edit-role" className="text-right">Role</Label>

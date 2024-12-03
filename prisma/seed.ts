@@ -36,51 +36,61 @@ async function main() {
     {
       name: 'John Admin',
       email: 'john.admin@example.com',
+      password: 'admin123',
       roleId: adminRole.id,
     },
     {
       name: 'Sarah Manager',
       email: 'sarah.manager@example.com',
+      password: 'manager123',
       roleId: managerRole.id,
     },
     {
       name: 'Mike User',
       email: 'mike.user@example.com',
+      password: 'user123',
       roleId: userRole.id,
     },
     {
       name: 'Emily Developer',
       email: 'emily.dev@example.com',
+      password: 'developer123',
       roleId: managerRole.id,
     },
     {
       name: 'Alex Support',
       email: 'alex.support@example.com',
+      password: 'support123',
       roleId: userRole.id,
     },
     {
       name: 'Lisa Admin',
       email: 'lisa.admin@example.com',
+      password: 'admin123',
       roleId: adminRole.id,
     },
     {
       name: 'David Manager',
       email: 'david.manager@example.com',
+      password: 'manager123',
       roleId: managerRole.id,
     },
     {
       name: 'Anna User',
       email: 'anna.user@example.com',
+      password: 'user123',
       roleId: userRole.id,
     },
     {
       name: 'Tom Analyst',
       email: 'tom.analyst@example.com',
+      password: 'analyst123',
       roleId: managerRole.id,
     },
     {
       name: 'Rachel Support',
       email: 'rachel.support@example.com',
+      password: 'support123',
       roleId: userRole.id,
     }
   ]
