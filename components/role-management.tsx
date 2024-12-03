@@ -273,7 +273,7 @@ export default function RoleManagement() {
             </TableHeader>
             <TableBody>
               {isLoading ? (
-                Array.from({ length: 5 }).map((_, index) => (
+                Array.from({ length: 10 }).map((_, index) => (
                   <TableRow key={index}>
                     <TableCell><Skeleton className="h-6 w-[180px]" /></TableCell>
                     <TableCell><Skeleton className="h-6 w-[250px]" /></TableCell>
