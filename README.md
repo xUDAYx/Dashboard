@@ -4,6 +4,8 @@ A modern Role-Based Access Control (RBAC) dashboard built with Next.js 14, Prism
 
 ![Dashboard Preview](./public/dashboard-preview.png)
 
+🌐 [Live Demo](https://dashboard-lyart-five-65.vercel.app/)
+
 ## ✨ Features
 
 ### 📊 Dashboard
@@ -47,8 +49,8 @@ A modern Role-Based Access Control (RBAC) dashboard built with Next.js 14, Prism
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/rbac-dashboard.git
-cd rbac-dashboard
+git clone https://github.com/xUDAYx/Dashboard.git
+cd Dashboard
 ```
 
 2. Install dependencies:
@@ -120,9 +122,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📧 Contact
 
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter)
+Uday Jawheri - [@xUDAYx](https://github.com/xUDAYx)
 
-Project Link: [https://github.com/yourusername/rbac-dashboard](https://github.com/yourusername/rbac-dashboard)
+Project Link: [https://github.com/xUDAYx/Dashboard](https://github.com/xUDAYx/Dashboard)
+
+Live Demo: [https://dashboard-lyart-five-65.vercel.app/](https://dashboard-lyart-five-65.vercel.app/)
+
+## 📊 Stats
+
+![Language Stats](https://img.shields.io/github/languages/top/xUDAYx/Dashboard)
+![Repo Size](https://img.shields.io/github/repo-size/xUDAYx/Dashboard)
+![Last Commit](https://img.shields.io/github/last-commit/xUDAYx/Dashboard)
 
 ---
 ⭐️ Star this repo if you find it helpful!
