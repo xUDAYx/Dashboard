@@ -26,7 +26,7 @@ type Role = {
 }
 
 export default function UserManagement() {
-  const [users, setUsers] = useState<User[]>([])
+  const [data, setData] = useState<User[]>([])
   const [roles, setRoles] = useState<Role[]>([])
   const [newUser, setNewUser] = useState({
     name: "",
@@ -38,7 +38,7 @@ export default function UserManagement() {
   const { toast } = useToast()
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [_error, setError] = useState<string | null>(null)
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
@@ -53,7 +53,7 @@ export default function UserManagement() {
       const response = await fetch("/api/users")
       if (!response.ok) throw new Error('Failed to fetch users')
       const data = await response.json()
-      setUsers(data)
+      setData(data)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setError(errorMessage)
@@ -96,7 +96,7 @@ export default function UserManagement() {
       })
       if (!response.ok) throw new Error('Failed to add user')
       const data = await response.json()
-      setUsers([...users, data])
+      setData([...data, data])
       setNewUser({ name: "", email: "", roleId: 0 })
       setIsDialogOpen(false)
       toast({
@@ -122,7 +122,7 @@ export default function UserManagement() {
       setIsLoading(true)
       const response = await fetch(`/api/users/${id}`, { method: "DELETE" })
       if (!response.ok) throw new Error('Failed to delete user')
-      setUsers(users.filter(user => user.id !== id))
+      setData(data.filter(user => user.id !== id))
       toast({
         title: "Success",
         description: "User deleted successfully",
@@ -158,7 +158,7 @@ export default function UserManagement() {
       if (!response.ok) throw new Error('Failed to update user')
       const updatedUser = await response.json()
       
-      setUsers(users.map(user => 
+      setData(data.map(user => 
         user.id === updatedUser.id ? updatedUser : user
       ))
       setIsEditDialogOpen(false)
@@ -305,7 +305,7 @@ export default function UserManagement() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
+          {data.map((user) => (
             <TableRow key={user.id}>
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>

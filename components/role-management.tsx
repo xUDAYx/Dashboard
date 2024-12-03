@@ -28,7 +28,7 @@ type SortConfig = {
 }
 
 export default function RoleManagement() {
-  const [roles, setRoles] = useState<Role[]>([])
+  const [data, setData] = useState<Role[]>([])
   const [permissions, setPermissions] = useState<Permission[]>([])
   const [newRole, setNewRole] = useState<Omit<Role, "id">>({ name: "", permissions: [] })
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -36,7 +36,7 @@ export default function RoleManagement() {
   const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'name', direction: 'ascending' })
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [_error, setError] = useState<string | null>(null)
   const [editingRole, setEditingRole] = useState<Role | null>(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
@@ -54,7 +54,7 @@ export default function RoleManagement() {
       const response = await fetch("/api/roles")
       if (!response.ok) throw new Error('Failed to fetch roles')
       const data = await response.json()
-      setRoles(data)
+      setData(data)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setError(errorMessage)
@@ -86,7 +86,7 @@ export default function RoleManagement() {
       })
       if (!response.ok) throw new Error('Failed to add role')
       const data = await response.json()
-      setRoles([...roles, data])
+      setData([...data, data])
       setNewRole({ name: "", permissions: [] })
       setIsDialogOpen(false)
       toast({
@@ -109,7 +109,7 @@ export default function RoleManagement() {
 
   const handleDeleteRole = async (id: number) => {
     await fetch(`/api/roles/${id}`, { method: "DELETE" })
-    setRoles(roles.filter(role => role.id !== id))
+    setData(data.filter(role => role.id !== id))
     toast({
       title: "Role Deleted",
       description: "The role has been successfully deleted.",
@@ -148,7 +148,7 @@ export default function RoleManagement() {
       if (!response.ok) throw new Error('Failed to update role')
       const updatedRole = await response.json()
       
-      setRoles(roles.map(role => 
+      setData(data.map(role => 
         role.id === updatedRole.id ? updatedRole : role
       ))
       setIsEditDialogOpen(false)
@@ -172,7 +172,7 @@ export default function RoleManagement() {
   }
 
   const filteredAndSortedRoles = useMemo(() => {
-    return roles
+    return data
       .filter(role => 
         role.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         role.permissions.some(permission => permission.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -186,7 +186,7 @@ export default function RoleManagement() {
         }
         return 0
       })
-  }, [roles, searchTerm, sortConfig])
+  }, [data, searchTerm, sortConfig])
 
   return (
     <div>
